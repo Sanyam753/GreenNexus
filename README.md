@@ -56,8 +56,8 @@ The Green Score Fintech Project involves developing a machine learning model tha
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/sanyam753/greenscore-fintech.git
-cd greenscore-fintech
+git clone https://github.com/Sanyam753/GreenNexus
+cd greennexus
 ```
 
 2. Install the required dependencies:
@@ -114,7 +114,7 @@ This project is licensed under the MIT License.
 
 For any questions or inquiries, please contact:
 
-- Your Name - [your.email@example.com](mailto:your.email@example.com)
+- Sanyam Sankhala - [your.email@example.com](mailto:your.email@example.com)
 - GitHub - [yourusername](https://github.com/yourusername)
 
 ---
