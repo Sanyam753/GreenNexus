@@ -31,11 +31,21 @@ model.fit(X_train, y_train)
 products = {
     "Clothing": [
         {"name": "Cotton Shirt", "material": "Cotton", "image": "images/cotton_shirt.jpg"},
-        {"name": "Polyester Jacket", "material": "Polyester", "image": "images/polyester_jacket.jpg"}
+        {"name": "Polyester Jacket", "material": "Polyester", "image": "images/polyester_jacket.webp"},
+        {"name": "Wool Sweater", "material": "Wool", "image": "images/wool_sweater.jpeg"},
+        {"name": "Silk Scarf", "material": "Silk", "image": "images/silk_scarf.jpeg"},
+        {"name": "Denim Jeans", "material": "Denim", "image": "images/denim_jeans.jpg"},
+        {"name": "Leather Jacket", "material": "Leather", "image": "images/leather_jacket.jpg"},
+        {"name": "Linen Shirt", "material": "Linen", "image": "images/linen_shirt.webp"},
+        {"name": "Nylon Shorts", "material": "Nylon", "image": "images/nylon_shorts.jpg"}
     ],
     "Automobile": [
         {"name": "Diesel Car", "material": "Diesel", "image": "images/diesel_car.jpeg"},
-        {"name": "Electric Car", "material": "Electric", "image": "images/electric_car.jpg"}
+        {"name": "Electric Car", "material": "Electric", "image": "images/electric_car.jpg"},
+        {"name": "Petrol Car", "material": "Petrol", "image": "images/petrol_car.webp"},
+        {"name": "Hybrid Car", "material": "Hybrid", "image": "images/hybrid_car.webp"},
+        {"name": "SUV", "material": "SUV", "image": "images/suv.jpg"},
+        {"name": "Sedan", "material": "Sedan", "image": "images/sedan.jpg"}
     ],
     "Food": [
         {"name": "Organic Vegetables", "material": "Vegetables", "image": "images/organic_vegetables.jpg"},
@@ -43,12 +53,25 @@ products = {
     ],
     "Electronics": [
         {"name": "LED Television", "material": "Television", "image": "images/led_television.jpg"},
-        {"name": "Smartphone", "material": "Mobile", "image": "images/smartphone.jpg"}
+        {"name": "Smartphone", "material": "Tablet", "image": "images/smartphone.jpg"}
     ]
 }
 
 # Streamlit application
 st.title('Carbon Emission Data Analytics')
+
+# Add custom CSS to adjust padding
+st.markdown("""
+    <style>
+    .css-1l02g0t {  /* The class name for the sidebar in Streamlit */
+        padding: 0 !important;  /* Remove padding from the sidebar */
+    }
+    .css-1v0mbdj {  /* The class name for the main content in Streamlit */
+        padding: 0 !important;  /* Remove padding from the main content */
+        margin-left: 2rem;  /* Adjust margin to control space between sidebar and main content */
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # Sidebar
 st.sidebar.title("Navigation")
@@ -73,7 +96,7 @@ if selected_option == "Home":
     st.write("Welcome to the Carbon Emission Data Analytics application. Please select an industry and a product to view detailed analytics.")
 
 elif selected_option == "Data Analytics":
-    col1, col2 = st.columns([3, 1])  # Set the ratio of the columns
+    col1, col2 = st.columns([2, 1])  # Set the ratio of the columns
 
     with col1:
         # Select industry
