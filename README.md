@@ -114,13 +114,11 @@ This project is licensed under the MIT License.
 
 For any questions or inquiries, please contact:
 
-- Sanyam Sankhala - [your.email@example.com](mailto:your.email@example.com)
-- GitHub - [yourusername](https://github.com/yourusername)
+- Sanyam Sankhala - [your.email@example.com](mailto:sanyamsankhala13@gmail.com)
+- GitHub - [Sanyam753](https://github.com/Sanyam753)
 
 ---
 
 Thank you for your interest in the Green Score Fintech Project! Let's make the world a greener place, one financial decision at a time. 🌍💚
 
----
 
-Feel free to adjust any sections or details to better fit your project specifics!
