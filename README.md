@@ -114,7 +114,7 @@ This project is licensed under the MIT License.
 
 For any questions or inquiries, please contact:
 
-- Sanyam Sankhala - [your.email@example.com](mailto:sanyamsankhala13@gmail.com)
+- Sanyam Sankhala - [sanyamsankhala13@gmail.com](mailto:sanyamsankhala13@gmail.com)
 - GitHub - [Sanyam753](https://github.com/Sanyam753)
 
 ---
