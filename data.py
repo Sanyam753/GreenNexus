@@ -57,18 +57,48 @@ products = {
     ]
 }
 
+# Function to calculate the green score
+def calculate_green_score(carbon_emission):
+    max_emission = df['CarbonEmission'].max()
+    min_emission = df['CarbonEmission'].min()
+    score = 5 - ((carbon_emission - min_emission) / (max_emission - min_emission) * 4)
+    return max(0, round(score, 1))
+
+# Function to get star emojis based on score
+def get_star_emojis(score):
+    full_stars = int(score)
+    half_star = int((score - full_stars) >= 0.5)
+    empty_stars = 5 - full_stars - half_star
+    return '⭐' * full_stars + '✰' * half_star + '☆' * empty_stars
+
+# Function to render the fixed box content
+def render_fixed_box(predicted_emission=None, green_score=None, star_rating=None):
+    st.markdown("""
+        <div class="fixed-box">
+            <h4>Product Analysis</h4>
+            <p><b>Predicted Carbon Emission:</b> {0:.2f} units</p>
+            <p><b>Green Score:</b> {1} {2}</p>
+        </div>
+    """.format(predicted_emission if predicted_emission is not None else 0,
+               green_score if green_score is not None else 0,
+               star_rating if star_rating is not None else ''), unsafe_allow_html=True)
+
 # Streamlit application
 st.title('Carbon Emission Data Analytics')
 
-# Add custom CSS to adjust padding
+# Add custom CSS to create a fixed box on the right
 st.markdown("""
     <style>
-    .css-1l02g0t {  /* The class name for the sidebar in Streamlit */
-        padding: 0 !important;  /* Remove padding from the sidebar */
-    }
-    .css-1v0mbdj {  /* The class name for the main content in Streamlit */
-        padding: 0 !important;  /* Remove padding from the main content */
-        margin-left: 2rem;  /* Adjust margin to control space between sidebar and main content */
+    .fixed-box {
+        position: fixed;
+        top: 30%;
+        right: 2%;
+        width: 400px;
+        Height:400px;
+        padding: 30px;
+        background-color: #282828;
+        box-shadow: 3px 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -126,9 +156,13 @@ elif selected_option == "Data Analytics":
             # Ensure the columns are in the same order as X_train
             new_data_encoded_df = new_data_encoded_df.reindex(columns=X_train.columns, fill_value=0)
 
-            predicted_emission = model.predict(new_data_encoded_df)
-            st.write(f"Predicted Carbon Emission: {predicted_emission[0]:.2f} units")
-            
+            predicted_emission = model.predict(new_data_encoded_df)[0]
+            green_score = calculate_green_score(predicted_emission)
+            star_rating = get_star_emojis(green_score)
+
+            # Render the fixed box with the prediction and green score
+            render_fixed_box(predicted_emission, green_score, star_rating)
+
             # Display carbon emission distribution for selected industry and material
             industry_data = df[df['Category'] == industry]
             material_data = industry_data[industry_data['Material'] == selected_product['material']]
@@ -169,26 +203,59 @@ elif selected_option == "Data Analytics":
             )
             st.altair_chart(box_plot)
 
-    with col2:
-        # Display carbon emission data on the right
-        st.subheader("Carbon Emission Data")
-        if selected_product:
-            st.write(f"Selected Product: {selected_product['name']}")
-            st.write(f"Predicted Carbon Emission: {predicted_emission[0]:.2f} units")
-        else:
-            st.write("Select a product to see the carbon emission data.")
+            # Display specific product information
+            st.image(selected_product["image"], width=150)  # Set fixed width
+            st.write(f"Material: {selected_product['material']}")
+            st.write(f"Industry: {industry}")
 
 elif selected_option == "Model Evaluation Metrics":
-    col1, col2 = st.columns([3, 1])  # Set the ratio of the columns
-    with col1:
-        # Display model evaluation metrics
-        y_pred = model.predict(X_test)
-        mse = mean_squared_error(y_test, y_pred)
-        mae = mean_absolute_error(y_test, y_pred)
-        r2 = r2_score(y_test, y_pred)
-        st.write(f"Mean Squared Error (MSE): {mse:.2f}")
-        st.write(f"Mean Absolute Error (MAE): {mae:.2f}")
-        st.write(f"R-squared (R²): {r2:.2f}")
+    st.header("Model Evaluation Metrics")
+    y_pred = model.predict(X_test)
+
+    st.subheader("Mean Squared Error (MSE)")
+    mse = mean_squared_error(y_test, y_pred)
+    st.write(f"MSE: {mse:.2f}")
+
+    st.subheader("Mean Absolute Error (MAE)")
+    mae = mean_absolute_error(y_test, y_pred)
+    st.write(f"MAE: {mae:.2f}")
+
+    st.subheader("R-squared (R2)")
+    r2 = r2_score(y_test, y_pred)
+    st.write(f"R2: {r2:.2f}")
+
+    # Histogram of residuals
+    st.subheader("Residuals Histogram")
+    residuals = y_test - y_pred
+    residuals_chart = alt.Chart(pd.DataFrame(residuals, columns=['Residuals'])).mark_bar().encode(
+        alt.X("Residuals", bin=True, title="Residuals"),
+        alt.Y("count()", title="Count"),
+        tooltip=["Residuals", "count()"]
+    ).properties(
+        width=600,
+        height=400
+    )
+    st.altair_chart(residuals_chart)
+
+    # Scatter plot of actual vs. predicted values
+    st.subheader("Actual vs. Predicted Values")
+    scatter_data = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
+    scatter_chart = alt.Chart(scatter_data).mark_circle(size=60).encode(
+        x="Actual",
+        y="Predicted",
+        color="Predicted",
+        tooltip=["Actual", "Predicted"]
+    ).properties(
+        width=600,
+        height=400
+    )
+    st.altair_chart(scatter_chart)
 
 elif selected_option == "About":
-    st.write("This application is designed to help users calculate the carbon emissions of various products based on their category and material. The model used is a Linear Regression model trained on synthetic data.")
+    st.header("About")
+    st.write("""
+    This application predicts the carbon emission of different products based on their category and material.
+    It uses a Linear Regression model trained on synthetic data to make predictions.
+    The application also provides various data analytics and visualization tools to help users understand the carbon emission patterns of different products.
+    """)
+    st.write("Contact: Your contact information here")
