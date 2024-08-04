@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import altair as alt
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
@@ -30,12 +31,7 @@ model.fit(X_train, y_train)
 products = {
     "Clothing": [
         {"name": "Cotton Shirt", "material": "Cotton", "image": "images/cotton_shirt.jpg"},
-        {"name": "Polyester Jacket", "material": "Polyester", "image": "images/polyester_jacket.jpg"},
-        {"name": "Wool Sweater", "material": "Wool", "image": "images/wool_sweater.jpeg"},
-        {"name": "Silk Scarf", "material": "Silk", "image": "images/silk_scarf.jpeg"},
-        {"name": "Denim Jeans", "material": "Denim", "image": "images/wool_sweater.jpeg"},
-        {"name": "Leather Jacket", "material": "Leather", "image": "images/wool_sweater.jpeg"},
-        {"name": "Linen Shirt", "material": "Linen", "image": "images/wool_sweater.jpeg"}
+        {"name": "Polyester Jacket", "material": "Polyester", "image": "images/polyester_jacket.jpg"}
     ],
     "Automobile": [
         {"name": "Diesel Car", "material": "Diesel", "image": "images/diesel_car.jpeg"},
@@ -52,19 +48,21 @@ products = {
 }
 
 # Streamlit application
-st.title('Carbon Emission Calculator')
+st.title('Carbon Emission Data Analytics')
 
 # Sidebar
 st.sidebar.title("Navigation")
 st.sidebar.subheader("Select Options")
 
 # Sidebar options
-sidebar_options = ["Home", "Model Evaluation Metrics", "About"]
+sidebar_options = ["Home", "Data Analytics", "Model Evaluation Metrics", "About"]
 selected_option = st.sidebar.selectbox("Go to", sidebar_options)
 
 # Sidebar content
 if selected_option == "Home":
-    st.sidebar.write("Welcome to the Carbon Emission Calculator. Please select an industry and a product to calculate its carbon emission.")
+    st.sidebar.write("Welcome to the Carbon Emission Data Analytics application. Please select an industry and a product to view detailed analytics.")
+elif selected_option == "Data Analytics":
+    st.sidebar.write("Select a product to view its carbon emission analytics.")
 elif selected_option == "Model Evaluation Metrics":
     st.sidebar.write("Model Evaluation Metrics provide insights into the performance of the carbon emission prediction model.")
 elif selected_option == "About":
@@ -72,7 +70,10 @@ elif selected_option == "About":
 
 # Main page content based on sidebar selection
 if selected_option == "Home":
-    col1, col2 = st.columns([4, 1])  # Set the ratio of the columns
+    st.write("Welcome to the Carbon Emission Data Analytics application. Please select an industry and a product to view detailed analytics.")
+
+elif selected_option == "Data Analytics":
+    col1, col2 = st.columns([3, 1])  # Set the ratio of the columns
 
     with col1:
         # Select industry
@@ -89,21 +90,61 @@ if selected_option == "Home":
 
         if selected_product:
             st.subheader(f"Selected Product: {selected_product['name']}")
-            weight = st.slider("Select Weight", 1, 100, 50)
+            weight = st.slider("Select Weight", 1, 100, 50)  # Add weight slider
             new_data = pd.DataFrame({
                 'Category': [industry],
                 'Material': [selected_product['material']],
-                'Weight': [weight]  # Add weight here
+                'Weight': [weight]
             })
             new_data_encoded = encoder.transform(new_data[['Category', 'Material']])
             new_data_encoded_df = pd.DataFrame(new_data_encoded, columns=encoder.get_feature_names_out(['Category', 'Material']))
             new_data_encoded_df['Weight'] = new_data['Weight'].values  # Add weight to the encoded data
 
             # Ensure the columns are in the same order as X_train
-            new_data_encoded_df = new_data_encoded_df[X_train.columns]
+            new_data_encoded_df = new_data_encoded_df.reindex(columns=X_train.columns, fill_value=0)
 
             predicted_emission = model.predict(new_data_encoded_df)
             st.write(f"Predicted Carbon Emission: {predicted_emission[0]:.2f} units")
+            
+            # Display carbon emission distribution for selected industry and material
+            industry_data = df[df['Category'] == industry]
+            material_data = industry_data[industry_data['Material'] == selected_product['material']]
+            
+            # Carbon emission histogram
+            st.write("Carbon Emission Distribution for Selected Product:")
+            hist_chart = alt.Chart(material_data).mark_bar().encode(
+                alt.X("CarbonEmission", bin=True, title="Carbon Emission"),
+                alt.Y("count()", title="Count"),
+                tooltip=["CarbonEmission", "count()"]
+            ).properties(
+                width=600,
+                height=400
+            )
+            st.altair_chart(hist_chart)
+            
+            # Scatter plot of Carbon Emission vs. Weight
+            st.write("Carbon Emission vs. Weight:")
+            scatter_chart = alt.Chart(material_data).mark_circle(size=60).encode(
+                x="Weight",
+                y="CarbonEmission",
+                color="Weight",
+                tooltip=["Weight", "CarbonEmission"]
+            ).properties(
+                width=600,
+                height=400
+            )
+            st.altair_chart(scatter_chart)
+            
+            # Box plot of Carbon Emission
+            st.write("Box Plot of Carbon Emission:")
+            box_plot = alt.Chart(material_data).mark_boxplot().encode(
+                y="CarbonEmission",
+                tooltip=["CarbonEmission"]
+            ).properties(
+                width=600,
+                height=400
+            )
+            st.altair_chart(box_plot)
 
     with col2:
         # Display carbon emission data on the right
@@ -128,40 +169,3 @@ elif selected_option == "Model Evaluation Metrics":
 
 elif selected_option == "About":
     st.write("This application is designed to help users calculate the carbon emissions of various products based on their category and material. The model used is a Linear Regression model trained on synthetic data.")
-
-# Define CSS for product display
-st.markdown(
-    """
-    <style>
-    .product-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
-    }
-    .product-card {
-        padding: 10px;
-        border: 2px solid #ddd;
-        border-radius: 10px;
-        margin: 10px;
-        width: 300px;
-        box-shadow: 2px 4px 8px 0 rgba(0,0,0,0.2);
-        transition: 0.3s;
-        text-align: center;
-    }
-    .product-card:hover {
-        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-    }
-    .product-card img {
-        border-radius: 10px;
-        width: 300px;
-        height: 300px;
-        object-fit: cover;
-    }
-    
-    .product-card button:hover {
-        background-color: #45a049;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)

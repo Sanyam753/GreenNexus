@@ -1,57 +1,63 @@
 import pandas as pd
 import numpy as np
 
-# Set random seed for reproducibility
-np.random.seed(42)
-
-# Define the industries and their respective parameters
-industries = {
-    "Clothing": {
-        "Material": ["Cotton", "Polyester", "Wool", "Silk"],
-        "ProductionProcess": ["Handmade", "Machine-made"],
-        "TransportDistance": np.random.uniform(50, 1000, 100),
-        "EnergyUsed": np.random.uniform(100, 1000, 100)
-    },
-    "Automobile": {
-        "FuelType": ["Diesel", "Petrol", "Electric", "Hybrid"],
-        "EngineSize": np.random.uniform(1.0, 4.0, 100),
-        "Mileage": np.random.uniform(10, 50, 100),
-        "ManufacturingLocation": ["Local", "International"]
-    },
-    "Electronics": {
-        "Type": ["Television", "Mobile", "Laptop", "Tablet"],
-        "ProductionEnergy": np.random.uniform(200, 2000, 100),
-        "Lifespan": np.random.uniform(1, 10, 100),
-        "TransportDistance": np.random.uniform(50, 1000, 100)
-    },
-    "Food": {
-        "Type": ["Grains", "Dairy", "Vegetables", "Fruits"],
-        "FarmingMethod": ["Organic", "Conventional"],
-        "Processing": ["None", "Minimal", "High"],
-        "Packaging": ["Plastic", "Glass", "Cardboard"],
-        "TransportDistance": np.random.uniform(50, 1000, 100)
-    }
+# Define the product categories and materials
+categories = ['Clothing', 'Automobile', 'Electronics', 'Food']
+materials = {
+    'Clothing': ['Cotton', 'Polyester', 'Wool', 'Silk', 'Nylon'],
+    'Automobile': ['Electric', 'Diesel', 'Petrol', 'Hybrid'],
+    'Electronics': ['Smartphone', 'Laptop', 'Tablet', 'Television', 'Smartwatch'],
+    'Food': ['Vegetables', 'Meat', 'Dairy', 'Grains', 'Processed Foods']
 }
 
-# Generate synthetic data for each industry
-synthetic_data = []
+# Define average carbon emissions for each material (in hypothetical units)
+carbon_emissions = {
+    'Cotton': 5,
+    'Polyester': 10,
+    'Wool': 8,
+    'Silk': 6,
+    'Nylon': 9,
+    'Electric': 3,
+    'Diesel': 20,
+    'Petrol': 15,
+    'Hybrid': 10,
+    'Smartphone': 15,
+    'Laptop': 25,
+    'Tablet': 20,
+    'Television': 30,
+    'Smartwatch': 10,
+    'Vegetables': 2,
+    'Meat': 25,
+    'Dairy': 10,
+    'Grains': 5,
+    'Processed Foods': 20
+}
 
-for industry, params in industries.items():
-    for i in range(100):
-        row = {"Industry": industry}
-        for param, values in params.items():
-            if isinstance(values, list):
-                row[param] = np.random.choice(values)
-            else:
-                row[param] = values[i]
-        # Generate a random carbon emission value
-        row["CarbonEmission"] = np.random.uniform(1, 100)
-        synthetic_data.append(row)
+# Generate synthetic data
+data = []
+np.random.seed(42)  # For reproducibility
 
-# Create a DataFrame
-df_synthetic = pd.DataFrame(synthetic_data)
+for category in categories:
+    for material in materials[category]:
+        for _ in range(30):  # Increase the number of entries per category-material pair
+            data.append({
+                'Category': category,
+                'Material': material,
+                'Weight': np.random.randint(1, 100),  # Add random weight between 1 and 100
+                'CarbonEmission': carbon_emissions[material] + np.random.normal(0, 1)  # Adding some noise
+            })
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+# Shuffle the DataFrame to ensure randomness
+df = df.sample(frac=1).reset_index(drop=True)
+
+# Display the first few entries
+print(df.head())
+
+# Ensure at least 100 entries
+print(f"Total entries: {len(df)}")
 
 # Save to CSV
-df_synthetic.to_csv('synthetic_carbon_footprint_data.csv', index=False)
-
-print("Synthetic dataset created successfully.")
+df.to_csv('synthetic_carbon_footprint_data.csv', index=False)
