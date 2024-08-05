@@ -49,7 +49,8 @@ products = {
     ],
     "Food": [
         {"name": "Organic Vegetables", "material": "Vegetables", "image": "images/organic_vegetables.jpg"},
-        {"name": "Dairy Milk", "material": "Dairy", "image": "images/dairy_milk.jpeg"}
+        {"name": "Dairy Milk", "material": "Dairy", "image": "images/dairy_milk.jpeg"},
+        {"name": "Grains", "material": "Grains", "image": "images/dairy_milk.jpeg"}
     ],
     "Electronics": [
         {"name": "LED Television", "material": "Television", "image": "images/led_television.jpg"},
@@ -93,8 +94,8 @@ st.markdown("""
         position: fixed;
         top: 30%;
         right: 2%;
-        width: 400px;
-        Height:400px;
+        width: 350px;
+        Height:350px;
         padding: 30px;
         background-color: #282828;
         box-shadow: 3px 4px 6px rgba(0, 0, 0, 0.1);
@@ -258,4 +259,4 @@ elif selected_option == "About":
     It uses a Linear Regression model trained on synthetic data to make predictions.
     The application also provides various data analytics and visualization tools to help users understand the carbon emission patterns of different products.
     """)
-    st.write("Contact: Your contact information here")
+    st.write("Contact: Sanyam Sankhala: sanyamsankhala753@gmail.com")
