@@ -58,7 +58,7 @@ def generate_pdf_report(report_id, green_score, carbon_emissions, data_summary, 
     c.setFillColor('#003366')
     c.drawString(margin, height - 2.5 * inch, "Green Score 🌿")
     c.setFont('Helvetica', 14)
-    c.drawString(margin, height - 2.75 * inch, f"Predicted Green Score: {green_score:.2f} / 1000")
+    c.drawString(margin, height - 2.75 * inch, f"Predicted Green Score: {green_score:.2f} / 10")
 
     # Carbon Emissions
     c.setFont('Helvetica-Bold', 18)
@@ -96,8 +96,8 @@ def generate_pdf_report(report_id, green_score, carbon_emissions, data_summary, 
     return buffer.getvalue()
 
 # Load the trained models
-model_green = joblib.load('model_green_extended.pkl')
-model_carbon = joblib.load('model_carbon_extended.pkl')
+model_green = joblib.load('models\model_green_extended.pkl')
+model_carbon = joblib.load('models\model_carbon_extended.pkl')
 
 # Function to display custom CSS
 def apply_custom_css():
@@ -166,7 +166,7 @@ st.title("Enterprise Carbon Footprint & Green Score Calculator 🌱")
 st.write("Welcome to the Enterprise Carbon Footprint and Green Score Calculator. Enter your data below to calculate your company's Green Score and Carbon Emissions.")
 
 # Sidebar with logo and inputs
-logo = "images/logo.png"  # Update this path to your logo file
+logo = "images\Green_score_logo2.png"  # Update this path to your logo file
 st.sidebar.image(logo, use_column_width=True, width=50)  # Adjust the width as needed
 st.sidebar.title("Enter Your Data")
 st.sidebar.write("Use the options below to enter your enterprise's data.")
@@ -189,8 +189,10 @@ if st.sidebar.button('Calculate'):
                             employee_awareness]])
 
     # Predict the Green Score and Carbon Emissions
-    green_score = model_green.predict(input_data)[0]
     carbon_emissions = model_carbon.predict(input_data)[0]
+    
+    # Inverse relation for green score: a simple linear inverse relation (example)
+    green_score = 1000 / (1 + carbon_emissions)  # Adjust this formula as needed
 
     # Generate unique report ID
     report_id = str(uuid.uuid4())
@@ -206,6 +208,7 @@ if st.sidebar.button('Calculate'):
         "Renewable Energy Usage": f"{renewable_energy_usage * 100}%",
         "Employee Awareness Programs": f"{employee_awareness} Hours/month"
     }
+
 
     tips = [
         "🌿 Consider increasing your investments in green projects to further reduce your carbon footprint.",
@@ -229,7 +232,7 @@ if st.sidebar.button('Calculate'):
     st.markdown(f"""
     <div class="result-card">
         <h2>Green Score 🌿</h2>
-        <h4>Predicted Green Score: {green_score:.2f} / 1000</h4>
+        <h4>Predicted Green Score: {green_score:.2f} / 10</h4>
     </div>
     """, unsafe_allow_html=True)
 
