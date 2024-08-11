@@ -166,7 +166,7 @@ st.title("Enterprise Carbon Footprint & Green Score Calculator 🌱")
 st.write("Welcome to the Enterprise Carbon Footprint and Green Score Calculator. Enter your data below to calculate your company's Green Score and Carbon Emissions.")
 
 # Sidebar with logo and inputs
-logo = "images\Green_score_logo2.png"  # Update this path to your logo file
+logo = "images/Green_score_logo2.png"  # Update this path to your logo file
 st.sidebar.image(logo, use_column_width=True, width=50)  # Adjust the width as needed
 st.sidebar.title("Enter Your Data")
 st.sidebar.write("Use the options below to enter your enterprise's data.")
