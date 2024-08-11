@@ -96,8 +96,8 @@ def generate_pdf_report(report_id, green_score, carbon_emissions, data_summary, 
     return buffer.getvalue()
 
 # Load the trained models
-model_green = joblib.load('models\model_green_extended.pkl')
-model_carbon = joblib.load('models\model_carbon_extended.pkl')
+model_green = joblib.load('model_green_extended.pkl')
+model_carbon = joblib.load('model_carbon_extended.pkl')
 
 # Function to display custom CSS
 def apply_custom_css():
