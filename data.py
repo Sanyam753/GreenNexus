@@ -7,8 +7,11 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from fpdf import FPDF
+from fpdf import FPDF
+import uuid
 from PIL import Image
 import os
+
 
 # Load the synthetic dataset
 df = pd.read_csv('synthetic_carbon_footprint_data.csv')
@@ -92,8 +95,6 @@ def render_fixed_box(predicted_emission=None, green_score=None, star_rating=None
 
 # Function to generate PDF report
 
-from fpdf import FPDF
-import uuid
 
 def remove_emojis(text):
     return text.encode('ascii', 'ignore').decode('ascii')
@@ -179,7 +180,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Sidebar
-st.sidebar.image("images\Green_house_Real_Estate_Logo__3.png", width=270)
+st.sidebar.image("Green_house_Real_Estate_Logo__3.png", width=270)
 st.sidebar.title("🌱 Navigation")
 st.sidebar.subheader("🔍 Select Options")
 
